@@ -124,7 +124,12 @@ while run:
                         guessed.append(ltr)
                         if ltr not in word:
                             hangman_status += 1
-
+ # check if user won
+    won = True
+    for letter in word:
+        if letter not in guessed:
+            won = False
+            break
 # out of the game loop
 # quit the game
 pygame.quit()
