@@ -33,10 +33,15 @@ for i in range(7):
     images.append(image)
 
 # game variables
-hangman_status = 4
+hangman_status = 0
+# word to be guessed
+word = "BLUENOSE"
+# letters guessed
+guessed = []
 
 # fonts
 LETTER_FONT = pygame.font.SysFont('helveticaneue', 30)
+WORD_FONT = pygame.font.SysFont('comicsans', 50)
 
 # colors
 WHITE = (255, 255, 255)
@@ -56,6 +61,21 @@ run = True
 def draw():
     # window background
     win.fill(WHITE)
+
+    # draw word
+    display_word = ""
+    for letter in word:
+        # check if letter has been guessed
+        if letter in guessed:
+            # space added for readability
+            display_word += letter + " "
+        else:
+            display_word += "_ "
+    # render the word
+    text = WORD_FONT.render(display_word, 1, BLACK)
+    # display on screen
+    win.blit(text, (400, 200))
+
     # draw buttons
     for letter in letters:
         # unpacking the variable
@@ -101,6 +121,9 @@ while run:
                     if dis < RADIUS:
                         # because 'visible' is actually a copy of letter[3]
                         letter[3] = False
+                        guessed.append(ltr)
+                        if ltr not in word:
+                            hangman_status += 1
 
 # out of the game loop
 # quit the game
