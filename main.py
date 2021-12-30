@@ -1,5 +1,5 @@
 import pygame
-import os
+import math
 
 # set up display
 pygame.init()
@@ -10,7 +10,7 @@ pygame.display.set_caption("Hangman Game!")
 # button variables
 RADIUS = 20
 GAP = 15
-# store [x, y, letter] in each element of letters
+# store [x, y, letter, boolean value (if clicked or not)] in each element of letters
 letters = []
 startx = round((WIDTH - (RADIUS * 2 + GAP) * 13) / 2)
 starty = 400
@@ -22,7 +22,7 @@ for i in range(26):
     x = startx + GAP * 2 + ((RADIUS * 2 + GAP) * (i % 13))
     y = starty + ((i // 13) * (GAP + RADIUS * 2))
     # convert ASCII value to character
-    letters.append([x, y, chr(A + i)])
+    letters.append([x, y, chr(A + i), True])
 
 print(letters)
 
@@ -59,13 +59,16 @@ def draw():
     # draw buttons
     for letter in letters:
         # unpacking the variable
-        x, y, ltr = letter
-        # where, what color, position of centre, radius, thickness
-        pygame.draw.circle(win, BLACK, (x, y), RADIUS, 3)
-        # render text (what we want to render, anti-aliasing, color)
-        text = LETTER_FONT.render(ltr, 1, BLACK)
-        # draw the text
-        win.blit(text, (x - text.get_width() / 2, y - text.get_height() / 2))
+        x, y, ltr, visible = letter
+        if visible:
+            # where, what color, position of centre, radius, thickness
+            pygame.draw.circle(win, BLACK, (x, y), RADIUS, 3)
+            # render text (what we want to render, anti-aliasing, color)
+            text = LETTER_FONT.render(ltr, 1, BLACK)
+            # draw the text
+            win.blit(text, (x - text.get_width() /
+                     2, y - text.get_height() / 2))
+
     # draw hangman image
     win.blit(images[hangman_status], (150, 100))
     # update display
@@ -87,9 +90,17 @@ while run:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             # get (x, y) position of mouse
-            # for comparing position of mouse to positions of buttons
-            pos = pygame.mouse.get_pos()
-            print(pos)
+            m_x, m_y = pygame.mouse.get_pos()
+            for letter in letters:
+                # unpacking
+                x, y, ltr, visible = letter
+                if visible:
+                    # check for collision
+                    # Pythagoras to determine the distance between mouse and centre of button
+                    dis = math.sqrt((x - m_x)**2 + (y - m_y)**2)
+                    if dis < RADIUS:
+                        # because 'visible' is actually a copy of letter[3]
+                        letter[3] = False
 
 # out of the game loop
 # quit the game
