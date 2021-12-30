@@ -24,8 +24,6 @@ for i in range(26):
     # convert ASCII value to character
     letters.append([x, y, chr(A + i), True])
 
-print(letters)
-
 # load images
 images = []
 for i in range(7):
@@ -94,6 +92,19 @@ def draw():
     # update display
     pygame.display.update()
 
+# function to display a message
+
+
+def display_message(message):
+    # overwrite the screen with white
+    win.fill(WHITE)
+    text = WORD_FONT.render(message, 1, BLACK)
+    win.blit(text, (WIDTH/2 - text.get_width() /
+             2, HEIGHT/2 - text.get_height() / 2))
+    pygame.display.update()
+    # display text for 3 seconds
+    pygame.time.delay(3000)
+
 
 # the game loop
 while run:
@@ -124,12 +135,22 @@ while run:
                         guessed.append(ltr)
                         if ltr not in word:
                             hangman_status += 1
- # check if user won
+    # check if user won
     won = True
     for letter in word:
         if letter not in guessed:
             won = False
             break
+
+    if won:
+        display_message("You won!!")
+        break
+
+    # if lost
+    if hangman_status == 6:
+        display_message("You lost :(")
+        break
+
 # out of the game loop
 # quit the game
 pygame.quit()
