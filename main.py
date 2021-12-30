@@ -10,15 +10,19 @@ pygame.display.set_caption("Hangman Game!")
 # button variables
 RADIUS = 20
 GAP = 15
+# store [x, y, letter] in each element of letters
 letters = []
 startx = round((WIDTH - (RADIUS * 2 + GAP) * 13) / 2)
 starty = 400
+# ASCII value
+A = 65
 # determine position of each button
 for i in range(26):
     # two rows of buttons
     x = startx + GAP * 2 + ((RADIUS * 2 + GAP) * (i % 13))
     y = starty + ((i // 13) * (GAP + RADIUS * 2))
-    letters.append([x, y])
+    # convert ASCII value to character
+    letters.append([x, y, chr(A + i)])
 
 print(letters)
 
@@ -30,6 +34,9 @@ for i in range(7):
 
 # game variables
 hangman_status = 4
+
+# fonts
+LETTER_FONT = pygame.font.SysFont('helveticaneue', 30)
 
 # colors
 WHITE = (255, 255, 255)
@@ -51,10 +58,14 @@ def draw():
     win.fill(WHITE)
     # draw buttons
     for letter in letters:
-        # unpacking
-        x, y = letter
+        # unpacking the variable
+        x, y, ltr = letter
         # where, what color, position of centre, radius, thickness
         pygame.draw.circle(win, BLACK, (x, y), RADIUS, 3)
+        # render text (what we want to render, anti-aliasing, color)
+        text = LETTER_FONT.render(ltr, 1, BLACK)
+        # draw the text
+        win.blit(text, (x - text.get_width() / 2, y - text.get_height() / 2))
     # draw hangman image
     win.blit(images[hangman_status], (150, 100))
     # update display
